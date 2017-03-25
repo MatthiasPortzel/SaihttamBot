@@ -1,0 +1,12 @@
+{
+  "name": "Tucker2",
+  "version": "2.0.0",
+  "description": "See README.md",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "dependencies": {
+    "discord.js": ">=10.0.1",
+    "request": "2.78.0"
+  }
+}
