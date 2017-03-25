@@ -1,12 +1,12 @@
 {
-  "name": "Tucker2",
-  "version": "2.0.0",
+  "name": "SaihttamBot",
+  "version": "1.0.1",
   "description": "See README.md",
   "engines": {
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "discord.js": ">=10.0.1",
+    "discord.js": ">=11.0.0",
     "request": "2.78.0"
   }
 }
