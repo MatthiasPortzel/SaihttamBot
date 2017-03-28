@@ -78,41 +78,8 @@ var commands = {
     },
 
     meta(message, args) {
-        if (args[0].length === 0) {
-            message.channel.sendMessage("This command is used for sub-commands relating to this bot.\n\n" +
-                "Correct usage is `./meta [author | source | help | name]`");
-        } else if (args[0].toLowerCase() === "author") {
-            message.channel.sendMessage("This bot is a fork of Blaze's Tucker bot. Most of the commands were programmed by Matthias but run on Tucker's framework.");
-        } else if (args[0].toLowerCase() === "help") {
-            message.channel.sendMessage("./help").then(() => message.channel.sendMessage("Yes, I can reply to myself. It's a feature!"))
-        } else if (args[0].toLowerCase() === "source") {
-            if (args.length > 1 && args[1] === "confirm") {
-                fs.readFile("bot.js", (e, data) => {
-                    if (e) {
-                        console.log(e);
-                        return;
-                    }
-                    //There's a huge section of Blaze's code commented out that I remove before sending. I also escape triple backticks
-                    var d = data.toString().replace(/MHid[e][\s\S]*?MSho[w]/gm, "").replace(/```/g, "\\x60\\x60\\x60").split("\n");
-                    var o = "```javascript\n";
-                    while (d.length > 0) {
-                        if (o.length + d[0].length > 1997) {
-                            message.author.sendMessage(o + "\x60\x60\x60");
-                            o = "```javascript\n";
-                        }
-                        o += d[0] + "\n";
-                        d.splice(0, 1);
-                    }
-                    message.author.sendMessage(o + "\x60\x60\x60");
-                    o = "```javascript\n";
-                });
-            } else {
-                message.channel.sendMessage("If you confirm, this will pm the entire source of this file" +
-                    " to you (about 200 line or 7000 characters). Run `./meta source | confirm` to confirm.");
-            }
-        } else if (args[0] === "name") {
-            message.channel.sendMessage("The name Tucker Saihttam comes from the name of Blaze's bot, Tucker, and my name (Matthias), backwards.");
-        }
+        message.channel.sendMessage("This is a bot developed by Matthias, based off of Blaze's Tucker" +
+            " framework, but modified heavily. It's open source here: https://github.com/MatthiasSaihttam/SaihttamBot.");
     },
 
     ping(message) {
