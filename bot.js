@@ -30,19 +30,19 @@ var addReacts = function(message, codePoint, numReacts) {
 }
 
 var commands = {
-    say(message, args) {
-        message.channel.sendMessage(args.join(" "));
+    say(message, content) {
+        message.channel.sendMessage(content);
     },
 
-    KAnameAvailable(message, args) {
-        if (!args[0]) {
+    KAnameAvailable(message, content) {
+        if (!content) {
             message.channel.sendMessage("Must pass in a KA username.");
         } else {
-            if (/[^\w.]/.test(args[0])) {
+            if (/[^\w.]/.test(content)) {
                 message.channel.sendMessage("Your \"username\" contains an invalid character.");
                 return;
             }
-            var url = "https://www.khanacademy.org/api/internal/user/username_available?username=" + args[0];
+            var url = "https://www.khanacademy.org/api/internal/user/username_available?username=" + content;
             request(url, function(error, response, body) {
                 if (response) {
                     if (!error && response.statusCode === 200) {
@@ -62,22 +62,22 @@ var commands = {
             });
         }
     },
-    pm(message, args) {
-        message.author.sendMessage(args[0]).catch(e => message.channel.sendMessage(args[0]));
+    pm(message, content) {
+        message.author.sendMessage(content).catch(e => message.channel.sendMessage(content));
     },
     help(message) {
         message.channel.sendMessage('Current Commands:\n```' + prefix + Object.keys(this).join(`, ${prefix}`) + '```');
     },
 
-    lmgtfy(message, args) {
-        message.channel.sendMessage('Let me google that for you: <http://lmgtfy.com/?q=' + encodeURIComponent(args[0]) + '>');
+    lmgtfy(message, content) {
+        message.channel.sendMessage('Let me google that for you: <http://lmgtfy.com/?q=' + encodeURIComponent(content) + '>');
     },
 
     fishfake(message) {
         message.channel.sendMessage('e$fishFake');
     },
 
-    meta(message, args) {
+    meta(message) {
         message.channel.sendMessage("This is a bot developed by Matthias, based off of Blaze's Tucker" +
             " framework, but modified heavily. It's open source here: https://github.com/MatthiasSaihttam/SaihttamBot.");
     },
@@ -86,15 +86,16 @@ var commands = {
         message.channel.sendMessage('pong');
     },
 
-    math(message, args) {
-        message.channel.sendMessage(new Function("return " + (args[0].replace(/[^0-9+\/\-()*]/g, "")))());
+    math(message, content) {
+        message.channel.sendMessage(new Function("return " + (content.replace(/[^0-9+\/\-()*]/g, "")))());
     },
 
     test2(message) {
         console.log(message.member.displayName);
     },
 
-    addReactions(message, args) {
+    addReactions(message, content) {
+        var args = content.split(" ");
         if (!message.guild || !message.guild.available || ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1) {
             message.channel.sendMessage("Invalid server");
             return;
@@ -118,7 +119,8 @@ var commands = {
         }
     },
 
-    addReaction(message, args) {
+    addReaction(message, content) {
+        var args = content.split(" ");
         if (!message.guild || !message.guild.available || ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1) {
             message.channel.sendMessage("Invalid server");
             return;
@@ -141,7 +143,8 @@ var commands = {
         }
     },
 
-    removeReactions(message, args) {
+    removeReactions(message, content) {
+        var args = content.split(" ");
         if (!message.guild || !message.guild.available || ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1) {
             message.channel.sendMessage("Invalid server");
             return;
@@ -173,19 +176,19 @@ Client.on('message', (message) => {
     try {
         var content = message.content;
         var hasAlreadyRunCommand = false
-        if (message.content === "e$Fishfake" || message.content.toLowerCase() === "e$fakefishfake") {
+        if (content === "e$Fishfake" || content.toLowerCase() === "e$fakefishfake") {
             message.channel.sendMessage(
                 ":fishing_pole_and_fish:  |  **" + message.author.username + ", you caught:**:paperclip:! Paid :yen: 0 for casting."
             ).catch(console.error);
         }
-        if (message.content === "c!ping") {
+        if (content === "c!ping") {
             message.channel.sendMessage("pong");
         }
         for (var i in commands) {
             if (typeof commands[i] !== 'function') continue
             if (content.toLowerCase().startsWith(prefix + i.toLowerCase())) {
-                var args = content.substr((prefix + i).length + 1, content.length).split(" ");
-                commands[i](message, args)
+                var cont = content.substr((prefix + i).length + 1, content.length)
+                commands[i](message, cont)
                 break;
             }
         }
