@@ -34,7 +34,7 @@ var commands = {
         message.channel.sendMessage(content);
     },
 
-    KAnameAvailable(message, content) {
+    kanameavailable(message, content) {
         if (!content) {
             message.channel.sendMessage("Must pass in a KA username.");
         } else {
@@ -94,7 +94,7 @@ var commands = {
         console.log(message.member.displayName);
     },
 
-    addReactions(message, content) {
+    addreactions(message, content) {
         var args = content.split(" ");
         if (!message.guild || !message.guild.available || ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1) {
             message.channel.sendMessage("Invalid server");
@@ -119,7 +119,7 @@ var commands = {
         }
     },
 
-    addReaction(message, content) {
+    addreaction(message, content) {
         var args = content.split(" ");
         if (!message.guild || !message.guild.available || ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1) {
             message.channel.sendMessage("Invalid server");
@@ -143,7 +143,7 @@ var commands = {
         }
     },
 
-    removeReactions(message, content) {
+    removereactions(message, content) {
         var args = content.split(" ");
         if (!message.guild || !message.guild.available || ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1) {
             message.channel.sendMessage("Invalid server");
@@ -175,7 +175,6 @@ var commands = {
 Client.on('message', (message) => {
     try {
         var content = message.content;
-        var hasAlreadyRunCommand = false
         if (content === "e$Fishfake" || content.toLowerCase() === "e$fakefishfake") {
             message.channel.sendMessage(
                 ":fishing_pole_and_fish:  |  **" + message.author.username + ", you caught:**:paperclip:! Paid :yen: 0 for casting."
@@ -184,12 +183,14 @@ Client.on('message', (message) => {
         if (content === "c!ping") {
             message.channel.sendMessage("pong");
         }
-        for (var i in commands) {
-            if (typeof commands[i] !== 'function') continue
-            if (content.toLowerCase().startsWith(prefix + i.toLowerCase())) {
-                var cont = content.substr((prefix + i).length + 1, content.length)
-                commands[i](message, cont)
-                break;
+
+        if (content.startsWith(prefix)) {
+            //Lowercase, starting past the prefix, grab until the first space or to the end of the string
+            var commandName = content.toLowerCase().substring(prefix.length, (content.indexOf(" ") +1 || content.length +1) -1)
+
+            if (typeof commands[commandName] === 'function') {
+                //Call the command, remove the prefix, command name, and space
+                commands[commandName](message, content.slice((prefix + commandName).length + 1))
             }
         }
     } catch (e) {
