@@ -6,16 +6,8 @@
 
 // Global dependencies
 const Discord = require('discord.js')
-const fs = require('fs')
 const request = require('request')
 const Client = new Discord.Client()
-
-/* TALKSHOW */
-var showing = false
-var host = ''
-var guests = []
-var showtitle = ''
-var elapsedseconds = 0
 
 var prefix = "./";
 
@@ -88,10 +80,6 @@ var commands = {
 
     math(message, content) {
         message.channel.sendMessage(new Function("return " + (content.replace(/[^0-9+\/\-()*]/g, "")))());
-    },
-
-    test2(message) {
-        console.log(message.member.displayName);
     },
 
     addreactions(message, content) {
@@ -199,13 +187,12 @@ Client.on('message', (message) => {
 })
 
 Client.on('ready', () => {
-    Client.user.setGame(prefix + 'help')
-    Client.user.setAvatar('./images/image.png')
+    // Client.user.setGame(prefix + 'help')
+    // Client.user.setAvatar('./images/image.png')
 })
 
-Client.on('messageDeleted', (message) => {
-    console.log("Sup");
-    console.log(`${message.author.username} said ${message.cleanContent} in #${message.channel.name}, before deleting it.`);
+Client.on('messageDelete', (message) => {
+    console.log(`${message.author.username} said ${message.content} in #${message.channel.name}, before deleting it.`);
 })
 
 function exitHandler(options, err) {
