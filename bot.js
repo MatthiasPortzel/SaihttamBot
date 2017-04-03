@@ -82,81 +82,54 @@ var commands = {
         message.channel.sendMessage(new Function("return " + (content.replace(/[^0-9+\/\-()*]/g, "")))());
     },
 
-    addreactions(message, content) {
+    reactions (message, content) {
         var args = content.split(" ");
-        if (!message.guild || !message.guild.available || ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1) {
-            message.channel.sendMessage("Invalid server");
-            return;
-        }
         var leadRole = message.guild.roles.find("name", "Project Lead");
-        if (leadRole && message.member.roles.has(leadRole.id)) {
-            message.channel.fetchMessage(args[1]).then(reactionMessage => {
-                if (!reactionMessage || !parseInt(args[0])) {
-                    message.channel.sendMessage("Invalid args");
-                } else {
-                    var numReactions = parseInt(args[0], 10);
-                    addReacts(reactionMessage, 127462, numReactions);
-                }
-            }).catch(e => {
-                message.channel.sendMessage("Invalid args");
-                console.log(e)
-            });
-        } else {
-            message.channel.sendMessage("Invalid user");
+        if (!message.guild || !message.guild.available ||
+                ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1 ||
+                !leadRole || !message.member.roles.has(leadRole.id)) {
+            message.channel.sendMessage("This command is meant to be used Project Leads on the OurJSEditor server.");
             return;
         }
-    },
-
-    addreaction(message, content) {
-        var args = content.split(" ");
-        if (!message.guild || !message.guild.available || ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1) {
-            message.channel.sendMessage("Invalid server");
+        if (!["addOne","addNum","remove"].includes(args[0])) {
+            message.channel.sendMessage(`Correct usage is:\`\`\`\n`+
+                `${prefix}reactions addNum [Message ID] [Num]\n` +
+                `${prefix}reactions addOne [Message ID] :[emoji]:\n` +
+                `${prefix}reactions remove [Message ID]\n\`\`\``);
             return;
         }
-        var leadRole = message.guild.roles.find("name", "Project Lead");
-        if (leadRole && message.member.roles.has(leadRole.id)) {
-            message.channel.fetchMessage(args[1]).then(reactionMessage => {
-                if (!reactionMessage) {
-                    message.channel.sendMessage("Invalid args");
-                } else {
-                    reactionMessage.react(args[0]);
-                }
-            }).catch(e => {
-                message.channel.sendMessage("Invalid args");
-                console.log(e)
-            });
-        } else {
-            message.channel.sendMessage("Invalid user");
-            return;
-        }
-    },
-
-    removereactions(message, content) {
-        var args = content.split(" ");
-        if (!message.guild || !message.guild.available || ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1) {
-            message.channel.sendMessage("Invalid server");
-            return;
-        }
-        var leadRole = message.guild.roles.find("name", "Project Lead");
-        if (leadRole && message.member.roles.has(leadRole.id)) {
-            message.channel.fetchMessage(args[0]).then(reactionMessage => {
-                if (!reactionMessage) {
-                    message.channel.sendMessage("Invalid args");
-                } else {
-                    for (let [emoji, reaction] of reactionMessage.reactions) {
-                        if (reaction.me) {
-                            reaction.remove(Client.user.id).catch(e => {});
+        message.channel.fetchMessage(args[1]).then(reactionMessage => {
+            if (reactionMessage) {
+                switch (args[0]) {
+                    case "addOne":
+                        reactionMessage.react(args[2]).catch(() => message.channel.sendMessage("It looks like you provided an invalid emoji"));
+                        break;
+                    case "addNum":
+                        var numReactions = parseInt(args[2], 10);
+                        if (Number.isNaN(numReactions)) {
+                            message.channel.sendMessage("Please provide a valid number.");
+                        }else {
+                            addReacts(reactionMessage, 127462, numReactions);
                         }
-                    }
+                        break;
+                    case "remove":
+                        for (let [emoji, reaction] of reactionMessage.reactions) {
+                            if (reaction.me) {
+                                reaction.remove(Client.user.id);
+                            }
+                        }
+                        break;
+                    default:
+                        message.channel.sendMessage("Correct options are `remove`, `addOne`, and `addNum`");
+                        break;
                 }
-            }).catch(e => {
-                message.channel.sendMessage("Invalid args");
-                console.log(e)
-            });
-        } else {
-            message.channel.sendMessage("Invalid user");
-            return;
-        }
+            }else {
+                //This just jumps us down to the catch. I don't think it will actually ever fire
+                throw "Invalid args";
+            }
+        }).catch(e => {
+            message.channel.sendMessage("It looks like you provided an invalid message.");
+        });
     },
 }
 
