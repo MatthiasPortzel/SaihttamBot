@@ -88,7 +88,7 @@ var commands = {
         if (!message.guild || !message.guild.available ||
                 ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1 ||
                 !leadRole || !message.member.roles.has(leadRole.id)) {
-            message.channel.sendMessage("This command is meant to be used Project Leads on the OurJSEditor server.");
+            message.channel.sendMessage("This command is meant to be used by Project Leads on the OurJSEditor server.");
             return;
         }
         if (!["addOne","addNum","remove"].includes(args[0])) {
