@@ -131,6 +131,34 @@ var commands = {
             message.channel.sendMessage("It looks like you provided an invalid message.");
         });
     },
+
+    eval(message) {
+        if (message.author.id != "226887818364846082") {
+            message.channel.sendMessage("You don't have permission to use this.");
+            return;
+        }
+        try {
+           var code = message.content.replace(/^\.\/eval\s*(?:-[a-zA-Z]+)?\s*(?:(?:```\w*[\r\n])|`)?([\s\S]*?)`{0,3}$/, "$1");
+           var output = eval(code);
+
+           //If -s flag is added, message is silent and doesn't send a reply automatically.
+           var toOutput = !(message.content.match(/^\.\/eval\s*-[r]?s/));
+
+           if (toOutput) {
+              if (output instanceof Promise) {
+                 output.then(a => message.channel.sendMessage("```" + a + "```")).catch(e => {
+                    message.channel.sendMessage("Failed with error\n```" + e + "```\nFull data printed to console.");
+                    console.log(e);
+                 });
+              }else {
+                 message.channel.sendMessage("```" + output + "```");
+              }
+           }
+        }catch(e) {
+           message.channel.sendMessage("```" + e + "```");
+           console.log(code);
+        }
+    },
 }
 
 Client.on('message', (message) => {
