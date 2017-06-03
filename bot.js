@@ -54,9 +54,11 @@ var commands = {
             });
         }
     },
+
     pm(message, content) {
         message.author.send(content).catch(e => message.channel.send(content));
     },
+
     help(message) {
         message.channel.send('Current Commands:\n```' + prefix + Object.keys(this).join(`, ${prefix}`) + '```');
     },
