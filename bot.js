@@ -65,10 +65,6 @@ var commands = {
         message.channel.send('Let me google that for you: <http://lmgtfy.com/?q=' + encodeURIComponent(content) + '>');
     },
 
-    fishfake(message) {
-        message.channel.send('e$fishFake');
-    },
-
     meta(message) {
         message.channel.send("This is a bot developed by Matthias, based off of Blaze's Tucker" +
             " framework, but modified heavily. It's open source here: https://github.com/MatthiasSaihttam/SaihttamBot.");
