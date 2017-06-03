@@ -1,12 +1,12 @@
 {
   "name": "SaihttamBot",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "See README.md",
   "engines": {
     "node": ">=6.0.0"
   },
   "dependencies": {
-    "discord.js": ">=11.0.0",
+    "discord.js": ">=11.1.0",
     "request": "2.78.0"
   }
 }

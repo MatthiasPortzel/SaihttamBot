@@ -23,15 +23,15 @@ var addReacts = function(message, codePoint, numReacts) {
 
 var commands = {
     say(message, content) {
-        message.channel.sendMessage(content);
+        message.channel.send(content);
     },
 
     kanameavailable(message, content) {
         if (!content) {
-            message.channel.sendMessage("Must pass in a KA username.");
+            message.channel.send("Must pass in a KA username.");
         } else {
             if (/[^\w.]/.test(content)) {
-                message.channel.sendMessage("Your \"username\" contains an invalid character.");
+                message.channel.send("Your \"username\" contains an invalid character.");
                 return;
             }
             var url = "https://www.khanacademy.org/api/internal/user/username_available?username=" + content;
@@ -40,13 +40,13 @@ var commands = {
                     if (!error && response.statusCode === 200) {
                         data = JSON.parse(body);
                         if (data) {
-                            message.channel.sendMessage("This username is available! :confetti_ball:");
+                            message.channel.send("This username is available! :confetti_ball:");
                         } else {
-                            message.channel.sendMessage("That username isn't available. :frowning:");
+                            message.channel.send("That username isn't available. :frowning:");
                         }
                     } else {
                         if (response) {
-                            message.channel.sendMessage("\uD83D\uDCE3 I got an error while parsing this command. Please try again. Status Code **" + response.statusCode + "**");
+                            message.channel.send("\uD83D\uDCE3 I got an error while parsing this command. Please try again. Status Code **" + response.statusCode + "**");
                         }
                     }
                 }
@@ -55,31 +55,31 @@ var commands = {
         }
     },
     pm(message, content) {
-        message.author.sendMessage(content).catch(e => message.channel.sendMessage(content));
+        message.author.send(content).catch(e => message.channel.send(content));
     },
     help(message) {
-        message.channel.sendMessage('Current Commands:\n```' + prefix + Object.keys(this).join(`, ${prefix}`) + '```');
+        message.channel.send('Current Commands:\n```' + prefix + Object.keys(this).join(`, ${prefix}`) + '```');
     },
 
     lmgtfy(message, content) {
-        message.channel.sendMessage('Let me google that for you: <http://lmgtfy.com/?q=' + encodeURIComponent(content) + '>');
+        message.channel.send('Let me google that for you: <http://lmgtfy.com/?q=' + encodeURIComponent(content) + '>');
     },
 
     fishfake(message) {
-        message.channel.sendMessage('e$fishFake');
+        message.channel.send('e$fishFake');
     },
 
     meta(message) {
-        message.channel.sendMessage("This is a bot developed by Matthias, based off of Blaze's Tucker" +
+        message.channel.send("This is a bot developed by Matthias, based off of Blaze's Tucker" +
             " framework, but modified heavily. It's open source here: https://github.com/MatthiasSaihttam/SaihttamBot.");
     },
 
     ping(message) {
-        message.channel.sendMessage('pong');
+        message.channel.send('pong');
     },
 
     math(message, content) {
-        message.channel.sendMessage(new Function("return " + (content.replace(/[^0-9+\/\-()*]/g, "")))());
+        message.channel.send(new Function("return " + (content.replace(/[^0-9+\/\-()*]/g, "")))());
     },
 
     reactions (message, content) {
@@ -88,11 +88,11 @@ var commands = {
         if (!message.guild || !message.guild.available ||
                 ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1 ||
                 !leadRole || !message.member.roles.has(leadRole.id)) {
-            message.channel.sendMessage("This command is meant to be used by Project Leads on the OurJSEditor server.");
+            message.channel.send("This command is meant to be used by Project Leads on the OurJSEditor server.");
             return;
         }
         if (!["addOne","addNum","remove"].includes(args[0])) {
-            message.channel.sendMessage(`Correct usage is:\`\`\`\n`+
+            message.channel.send(`Correct usage is:\`\`\`\n`+
                 `${prefix}reactions addNum [Message ID] [Num]\n` +
                 `${prefix}reactions addOne [Message ID] :[emoji]:\n` +
                 `${prefix}reactions remove [Message ID]\n\`\`\``);
@@ -102,12 +102,12 @@ var commands = {
             if (reactionMessage) {
                 switch (args[0]) {
                     case "addOne":
-                        reactionMessage.react(args[2]).catch(() => message.channel.sendMessage("It looks like you provided an invalid emoji"));
+                        reactionMessage.react(args[2]).catch(() => message.channel.send("It looks like you provided an invalid emoji"));
                         break;
                     case "addNum":
                         var numReactions = parseInt(args[2], 10);
                         if (Number.isNaN(numReactions)) {
-                            message.channel.sendMessage("Please provide a valid number.");
+                            message.channel.send("Please provide a valid number.");
                         }else {
                             addReacts(reactionMessage, 127462, numReactions);
                         }
@@ -120,7 +120,7 @@ var commands = {
                         }
                         break;
                     default:
-                        message.channel.sendMessage("Correct options are `remove`, `addOne`, and `addNum`");
+                        message.channel.send("Correct options are `remove`, `addOne`, and `addNum`");
                         break;
                 }
             }else {
@@ -128,13 +128,13 @@ var commands = {
                 throw "Invalid args";
             }
         }).catch(e => {
-            message.channel.sendMessage("It looks like you provided an invalid message.");
+            message.channel.send("It looks like you provided an invalid message.");
         });
     },
 
     eval(message) {
         if (message.author.id != "226887818364846082") {
-            message.channel.sendMessage("You don't have permission to use this.");
+            message.channel.send("You don't have permission to use this.");
             return;
         }
         try {
@@ -146,16 +146,16 @@ var commands = {
 
            if (toOutput) {
               if (output instanceof Promise) {
-                 output.then(a => message.channel.sendMessage("```" + a + "```")).catch(e => {
-                    message.channel.sendMessage("Failed with error\n```" + e + "```\nFull data printed to console.");
+                 output.then(a => message.channel.send("```" + a + "```")).catch(e => {
+                    message.channel.send("Failed with error\n```" + e + "```\nFull data printed to console.");
                     console.log(e);
                  });
               }else {
-                 message.channel.sendMessage("```" + output + "```");
+                 message.channel.send("```" + output + "```");
               }
            }
         }catch(e) {
-           message.channel.sendMessage("```" + e + "```");
+           message.channel.send("```" + e + "```");
            console.log(code);
         }
     },
@@ -165,12 +165,12 @@ Client.on('message', (message) => {
     try {
         var content = message.content;
         if (content === "e$Fishfake" || content.toLowerCase() === "e$fakefishfake") {
-            message.channel.sendMessage(
+            message.channel.send(
                 ":fishing_pole_and_fish:  |  **" + message.author.username + ", you caught:**:paperclip:! Paid :yen: 0 for casting."
             ).catch(console.error);
         }
         if (content === "c!ping") {
-            message.channel.sendMessage("pong");
+            message.channel.send("pong");
         }
 
         if (content.startsWith(prefix)) {
@@ -183,7 +183,7 @@ Client.on('message', (message) => {
             }
         }
     } catch (e) {
-        message.channel.sendMessage('Error: ```javascript\n' + e + '```')
+        message.channel.send('Error: ```javascript\n' + e + '```')
     }
 })
 
