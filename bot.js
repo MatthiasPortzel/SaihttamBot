@@ -159,6 +159,23 @@ var commands = {
     },
 }
 
+function verifyCarets (message) {
+    //Verify carets
+    if (message.channel.name === "caret") {
+        var content = message.content
+            .replace(/```(?:\w+\n)([\s\S]*?)```/g, "$1")
+            .replace(/`([\s\S]*?)`/g, "$1")
+            .replace(/_([\s\S]*?)_/g, "$1")
+            .replace(/\*([\s\S]*?)\*/g, "$1")
+            .replace(/~~([\s\S]*?)~~/g, "$1")
+        if (content.match(/[^^\s]/)) {
+            message.delete();
+            return false;
+        }
+        return true;
+    }
+}
+
 Client.on('message', (message) => {
     try {
         var content = message.content;
@@ -170,6 +187,8 @@ Client.on('message', (message) => {
         if (content === "c!ping") {
             message.channel.send("pong");
         }
+
+        verifyCarets(message);
 
         if (content.startsWith(prefix)) {
             //Lowercase, starting past the prefix, grab until the first space or to the end of the string
@@ -191,7 +210,11 @@ Client.on('ready', () => {
 })
 
 Client.on('messageDelete', (message) => {
-    console.log(`${message.author.username} said ${message.content} in #${message.channel.name}, before deleting it.`);
+    console.log(`${message.author.tag} said ${message.content} in #${message.channel.name}, before it was deleted`);
+})
+
+Client.on('messageUpdate', (oldMess, newMess) => {
+    verifyCarets(newMess);
 })
 
 function exitHandler(options, err) {
