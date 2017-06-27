@@ -180,9 +180,17 @@ function verifyCarets (message) {
 
 Client.on('message', (message) => {
     try {
-        runOnMessage.forEach(function (func) {
-            func(message);
-        });
+        if (message.guild.id !== "265512865413201920") return;
+        for (var i = 0; i < runOnMessage.length; i++) {
+            try {
+                runOnMessage[i](message);
+            }catch (e) {
+                message.channel.send("```" + e + "```");
+                message.channel.send("Run on message function failed. Removing it to save you.");
+                runOnMessage.splice(i, 1);
+                i--;
+            }
+        }
 
         var content = message.content;
         if (content === "e$Fishfake" || content.toLowerCase() === "e$fakefishfake") {
