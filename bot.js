@@ -180,7 +180,6 @@ function verifyCarets (message) {
 
 Client.on('message', (message) => {
     try {
-        if (message.guild.id !== "265512865413201920") return;
         for (var i = 0; i < runOnMessage.length; i++) {
             try {
                 runOnMessage[i](message);
