@@ -11,6 +11,8 @@ const Client = new Discord.Client()
 
 var prefix = "./";
 
+var runOnMessage = [];
+
 var addReacts = function(message, codePoint, numReacts) {
     if (codePoint - 127462 >= numReacts) {
         return;
@@ -178,6 +180,10 @@ function verifyCarets (message) {
 
 Client.on('message', (message) => {
     try {
+        runOnMessage.forEach(function (func) {
+            func(message);
+        });
+
         var content = message.content;
         if (content === "e$Fishfake" || content.toLowerCase() === "e$fakefishfake") {
             message.channel.send(
