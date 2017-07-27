@@ -1,6 +1,6 @@
 {
   "name": "SaihttamBot",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "See README.md",
   "engines": {
     "node": ">=6.0.0"

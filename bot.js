@@ -170,7 +170,7 @@ function verifyCarets (message) {
             .replace(/_([\s\S]*?)_/g, "$1")
             .replace(/\*([\s\S]*?)\*/g, "$1")
             .replace(/~~([\s\S]*?)~~/g, "$1")
-        if (content.match(/[^^\s]/)) {
+        if (content.match(/[^^\s]/) || message.attachments.size || message.embeds.length) {
             message.delete();
             return false;
         }
