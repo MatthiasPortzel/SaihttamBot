@@ -165,12 +165,12 @@ function verifyCarets (message) {
     //Verify carets
     if (message.channel.name === "caret") {
         var content = message.content
-            .replace(/```(?:\w+\n)([\s\S]*?)```/g, "$1")
-            .replace(/`([\s\S]*?)`/g, "$1")
-            .replace(/_([\s\S]*?)_/g, "$1")
-            .replace(/\*([\s\S]*?)\*/g, "$1")
-            .replace(/~~([\s\S]*?)~~/g, "$1")
-        if (content.match(/[^^\s]/) || message.attachments.size || message.embeds.length) {
+            .replace(/```(?:\w+\n)([\s\S]+?)```/g, "$1")
+            .replace(/`([\s\S]+?)`/g, "$1")
+            .replace(/_([\s\S]+?)_/g, "$1")
+            .replace(/\*([\s\S]+?)\*/g, "$1")
+            .replace(/~~([\s\S]+?)~~/g, "$1")
+        if (content.match(/[^^\s]/) || message.attachments.size || message.embeds.length || message.mentions.length) {
             message.delete();
             return false;
         }
