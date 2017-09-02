@@ -165,7 +165,7 @@ function verifyCarets (message) {
     //Verify carets
     if (message.channel.name === "caret") {
         var content = message.content
-            .replace(/```(?:\w+\n)([\s\S]+?)```/g, "$1")
+            .replace(/```(?:\w+\n)?([\s\S]+?)```/g, "$1")
             .replace(/`([\s\S]+?)`/g, "$1")
             .replace(/_([\s\S]+?)_/g, "$1")
             .replace(/\*([\s\S]+?)\*/g, "$1")
