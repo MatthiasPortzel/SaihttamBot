@@ -36,7 +36,7 @@ var commands = {
                 message.channel.send("Your \"username\" contains an invalid character.");
                 return;
             }
-            var url = "https://www.khanacademy.org/api/internal/user/username_available?username=" + content;
+            var url = "https://www.khanacademy.org/api/internal/signup/check-username?username=" + content;
             request(url, function(error, response, body) {
                 if (response) {
                     if (!error && response.statusCode === 200) {
