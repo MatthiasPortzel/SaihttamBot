@@ -57,8 +57,21 @@ var commands = {
         }
     },
 
-    pm(message, content) {
-        message.author.send(content).catch(e => message.channel.send(content));
+    bitcoin(message) {
+        message.channel.startTyping();
+        request("https://blockchain.info/tobtc?currency=USD&value=1", function (error, response, body) {
+            if (response) {
+                if (!error && response.statusCode === 200) {
+                    data = JSON.parse(body);
+                    message.channel.send(`1 Bitcoin is currently worth $${(1/data).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}.`);
+                } else {
+                    if (response) {
+                        message.channel.send("\uD83D\uDCE3 I got an error. Please try again later. Status Code **" + response.statusCode + "**");
+                    }
+                }
+                message.channel.stopTyping();
+            }
+        })
     },
 
     help(message) {
@@ -69,9 +82,10 @@ var commands = {
         message.channel.send('Let me google that for you: <http://lmgtfy.com/?q=' + encodeURIComponent(content) + '>');
     },
 
-    meta(message) {
+    about(message) {
         message.channel.send("This is a bot developed by Matthias, based off of Blaze's Tucker" +
-            " framework, but modified heavily. It's open source here: https://github.com/MatthiasSaihttam/SaihttamBot.");
+            " framework, but modified heavily. It mainly serves to help Matthias and to service the OurJSEditor server. " +
+            "It's open source here: https://github.com/MatthiasSaihttam/SaihttamBot.");
     },
 
     ping(message) {
