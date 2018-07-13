@@ -6,7 +6,10 @@
     "node": ">=6.0.0"
   },
   "dependencies": {
+    "btoa": "^1.2.1",
     "discord.js": ">=11.1.0",
-    "request": "2.78.0"
+    "mysql": "^2.15.0",
+    "npm": "^6.1.0",
+    "request": "^2.87.0"
   }
 }
