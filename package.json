@@ -1,15 +1,11 @@
 {
-  "name": "SaihttamBot",
-  "version": "1.0.4",
-  "description": "See README.md",
-  "engines": {
-    "node": ">=6.0.0"
-  },
-  "dependencies": {
-    "btoa": "^1.2.1",
-    "discord.js": ">=11.1.0",
-    "mysql": "^2.15.0",
-    "npm": "^6.1.0",
-    "request": "^2.87.0"
-  }
+    "name": "SaihttamBot",
+    "version": "0.2.0",
+    "description": "See README.md",
+    "dependencies": {
+        "discord.js": "^11.4.2"
+    },
+    "optionalDependencies": {
+        "mysql": "^2.16.0"
+    }
 }
