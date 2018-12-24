@@ -156,6 +156,8 @@ Client.on('message', (message) => {
     }
 })
 
+Client.login(passwords.discord).catch(console.error);
+
 Client.on('ready', () => {
     console.log("Connected to Discord");
     // Client.user.setGame(prefix + 'help')
