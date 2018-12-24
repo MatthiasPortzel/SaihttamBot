@@ -34,79 +34,101 @@ function addReacts (message, codePoint, numReacts) {
     }
 }
 
-var commands = {
-    say(message, content) {
-        message.channel.send(content);
+var commands = [
+    {
+        command: ["say", "echo"],
+        func: function say (message, content) {
+            message.channel.send(content);
+        },
+        args: "<message>",
+        help: "Repeats back your message"
     },
 
-    help(message) {
-        message.channel.send('Current Commands:\n```' + prefix + Object.keys(this).join(`,\n${prefix}`) + '```');
+    {
+        command: ["help"],
+        func: function help(message) {
+            message.channel.send('Current Commands:\n```' + prefix + Object.keys(this).join(`,\n${prefix}`) + '```');
+            //https://github.com/MatthiasSaihttam/SaihttamBot
+        },
+        help: "Gives you this list of commands"
     },
 
-    about(message) {
-        message.channel.send("This is a bot developed by Matthias." +
-            "It's open source here: https://github.com/MatthiasSaihttam/SaihttamBot.");
+    {
+        command: ["math"],
+        func: function math(message, content) {
+            message.channel.send(new Function("return " + (content.replace(/[^0-9+\/\-()*]/g, "")))());
+        },
+        args: "<expression>",
+        help: "Evaluates *expression*"
     },
 
-    math(message, content) {
-        message.channel.send(new Function("return " + (content.replace(/[^0-9+\/\-()*]/g, "")))());
-    },
+    {
+        command: ["poll", "reactions"],
+        func: function poll(message, content) {
+            const args = content.split(" ");
+            const numReactions = parseInt(args[0] || "2", 10);
 
-    poll(message, content) {
-        const args = content.split(" ");
-        const numReactions = parseInt(args[0] || "2", 10);
-
-        if (Number.isNaN(numReactions)) {
-            message.channel.send("Error. Invalid number.");
-            return;
-        }
-
-        message.channel.fetchMessages({ limit: 2 }).then(messages => messages.entries()).then(messages => {
-            messages.next(); //Not the last message (the ./poll)
-            const reactMessage = messages.next().value[1]; //But the one before that
-
-            if (reactMessage.author !== message.author) {
-                message.channel.send("Use on your own message. (Right after you've sent a message)");
+            if (Number.isNaN(numReactions)) {
+                message.channel.send("Error. Invalid number.");
                 return;
             }
 
-            if (numReactions === 2) {
-                reactMessage.react("\u{1f44d}").then(() => {
-                    reactMessage.react("\u{1f44e}").catch(console.error);;
-                }).catch(console.error);
-            }else {
-                addReacts(reactMessage, 127462, numReactions);
+            message.channel.fetchMessages({ limit: 2 }).then(messages => messages.entries()).then(messages => {
+                messages.next(); //Not the last message (the ./poll)
+                const reactMessage = messages.next().value[1]; //But the one before that
+
+                if (reactMessage.author !== message.author) {
+                    message.channel.send("Use on your own message. (Right after you've sent a message)");
+                    return;
+                }
+
+                if (numReactions === 2) {
+                    reactMessage.react("\u{1f44d}").then(() => {
+                        reactMessage.react("\u{1f44e}").catch(console.error);;
+                    }).catch(console.error);
+                }else {
+                    addReacts(reactMessage, 127462, numReactions);
+                }
+            })
+        },
+        args: "<number of options (defaults to 2)>",
+        help: "Add reactions for "
+    },
+
+    {
+        command: ["eval"],
+        func: function
+        eval(message) {
+            if (message.author.id != "226887818364846082") {
+                message.channel.send("You don't have permission to use this.");
+                return;
             }
-        })
+            try {
+               var code = message.content.replace(/^\.\/eval\s*(?:-[a-zA-Z]+)?\s*(?:(?:```\w*[\r\n])|`)?([\s\S]*?)`{0,3}$/, "$1");
+               var output = eval(code);
+
+               //If -s flag is added, message is silent and doesn't send a reply automatically.
+               var toOutput = !(message.content.match(/^\.\/eval\s*-s/));
+
+               if (toOutput) {
+                  if (output instanceof Promise) {
+                     output.then(a => message.channel.send("```" + a + "```")).catch(e => {
+                        message.channel.send("Failed with error\n```" + e + "```\nFull data printed to console.");
+                        console.log(e);
+                     });
+                  }else {
+                     message.channel.send("```" + output + "```");
+                  }
+               }
+            }catch(e) {
+               message.channel.send("```" + e + "```");
+            }
+        },
+        hidden: true,
+        args: "[-s] <command>",
+        help: "eval (for)"
     },
-
-    eval(message) {
-        if (message.author.id != "226887818364846082") {
-            message.channel.send("You don't have permission to use this.");
-            return;
-        }
-        try {
-           var code = message.content.replace(/^\.\/eval\s*(?:-[a-zA-Z]+)?\s*(?:(?:```\w*[\r\n])|`)?([\s\S]*?)`{0,3}$/, "$1");
-           var output = eval(code);
-
-           //If -s flag is added, message is silent and doesn't send a reply automatically.
-           var toOutput = !(message.content.match(/^\.\/eval\s*-[r]?s/));
-
-           if (toOutput) {
-              if (output instanceof Promise) {
-                 output.then(a => message.channel.send("```" + a + "```")).catch(e => {
-                    message.channel.send("Failed with error\n```" + e + "```\nFull data printed to console.");
-                    console.log(e);
-                 });
-              }else {
-                 message.channel.send("```" + output + "```");
-              }
-           }
-        }catch(e) {
-           message.channel.send("```" + e + "```");
-        }
-    },
-}
+];
 
 function verifyCarets (message) {
     //Verify carets
@@ -138,17 +160,21 @@ Client.on('message', (message) => {
             }
         }
 
-        var content = message.content;
+        const content = message.content;
 
         verifyCarets(message);
 
         if (content.startsWith(prefix)) {
             //Lowercase, starting past the prefix, grab until the first space or to the end of the string
-            var commandName = content.toLowerCase().substring(prefix.length, (content.indexOf(" ") +1 || content.length +1) -1)
+            const commandName = content.toLowerCase().substring(prefix.length, (content.indexOf(" ") +1 || content.length +1) -1)
 
-            if (typeof commands[commandName] === 'function') {
+            const command = commands.find(c => c.command.indexOf(commandName) > -1);
+
+            if (command) {
                 //Call the command, remove the prefix, command name, and space
-                commands[commandName](message, content.slice((prefix + commandName).length + 1))
+                command.func(message, content.slice((prefix + commandName).length + 1))
+            }else {
+                message.channel.send("It looks like you may have been trying to use a command. Try `./help`.");
             }
         }
     } catch (e) {
