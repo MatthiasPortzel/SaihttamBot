@@ -47,10 +47,24 @@ var commands = [
     {
         command: ["help"],
         func: function help(message) {
-            message.channel.send('Current Commands:\n```' + prefix + Object.keys(this).join(`,\n${prefix}`) + '```');
-            //https://github.com/MatthiasSaihttam/SaihttamBot
+            const helpEmbed = new Discord.RichEmbed({
+                author: {
+                    name: "Saihttam Help",
+                    icon_url: "https://cdn.discordapp.com/avatars/251143910347243531/6613b6866204a95c82781c528da8bf99.jpg?size=64"
+                },
+                color: 0x377735
+            });
+
+            for (let {command: commandArr, args: arguments, help: description, hidden: hidden} of commands) {
+                if (hidden) continue;
+                helpEmbed.addField(prefix + commandArr[0] + (arguments ? " " + arguments : ""), description, true);
+            }
+
+            helpEmbed.addField("\u200B", "*Saihttam is coded and hosted by <@226887818364846082>, and is open source [on Github](https://github.com/MatthiasSaihttam/SaihttamBot).*");
+
+            message.channel.send(helpEmbed);
         },
-        help: "Gives you this list of commands"
+        hidden: true
     },
 
     {
@@ -91,8 +105,8 @@ var commands = [
                 }
             })
         },
-        args: "<number of options (defaults to 2)>",
-        help: "Add reactions for "
+        args: "<count>",
+        help: "Adds *count* reactions to the previous message (so people can vote)"
     },
 
     {
