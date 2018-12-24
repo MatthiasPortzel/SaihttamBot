@@ -160,7 +160,7 @@ Client.login(passwords.discord).catch(console.error);
 
 Client.on('ready', () => {
     console.log("Connected to Discord");
-    // Client.user.setGame(prefix + 'help')
+    Client.user.setGame(prefix + 'help');
     // Client.user.setAvatar('./images/image.png')
 })
 
