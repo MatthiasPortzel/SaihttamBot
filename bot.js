@@ -186,7 +186,7 @@ Client.login(passwords.discord).catch(console.error);
 
 Client.on('ready', () => {
     console.log("Connected to Discord");
-    Client.user.setGame(prefix + 'help');
+    Client.user.setActivity(`for ${prefix}help`, { type: "WATCHING" });
     // Client.user.setAvatar('./images/image.png')
 })
 
