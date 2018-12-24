@@ -52,54 +52,32 @@ var commands = {
         message.channel.send(new Function("return " + (content.replace(/[^0-9+\/\-()*]/g, "")))());
     },
 
-    reactions (message, content) {
-        var args = content.split(" ");
-        var leadRole = message.guild.roles.find("name", "Project Lead");
-        if (!message.guild || !message.guild.available ||
-                ["265512865413201920", "280910237807149056"].indexOf(message.guild.id) === -1 ||
-                !leadRole || !message.member.roles.has(leadRole.id)) {
-            message.channel.send("This command is meant to be used by Project Leads on the OurJSEditor server.");
+    poll(message, content) {
+        const args = content.split(" ");
+        const numReactions = parseInt(args[0] || "2", 10);
+
+        if (Number.isNaN(numReactions)) {
+            message.channel.send("Error. Invalid number.");
             return;
         }
-        if (!["addOne","addNum","remove"].includes(args[0])) {
-            message.channel.send(`Correct usage is:\`\`\`\n`+
-                `${prefix}reactions addNum [Message ID] [Num]\n` +
-                `${prefix}reactions addOne [Message ID] :[emoji]:\n` +
-                `${prefix}reactions remove [Message ID]\n\`\`\``);
-            return;
-        }
-        message.channel.fetchMessage(args[1]).then(reactionMessage => {
-            if (reactionMessage) {
-                switch (args[0]) {
-                    case "addOne":
-                        reactionMessage.react(args[2]).catch(() => message.channel.send("It looks like you provided an invalid emoji"));
-                        break;
-                    case "addNum":
-                        var numReactions = parseInt(args[2], 10);
-                        if (Number.isNaN(numReactions)) {
-                            message.channel.send("Please provide a valid number.");
-                        }else {
-                            addReacts(reactionMessage, 127462, numReactions);
-                        }
-                        break;
-                    case "remove":
-                        for (let [emoji, reaction] of reactionMessage.reactions) {
-                            if (reaction.me) {
-                                reaction.remove(Client.user.id);
-                            }
-                        }
-                        break;
-                    default:
-                        message.channel.send("Correct options are `remove`, `addOne`, and `addNum`");
-                        break;
-                }
-            }else {
-                //This just jumps us down to the catch. I don't think it will actually ever fire
-                throw "Invalid args";
+
+        message.channel.fetchMessages({ limit: 2 }).then(messages => messages.entries()).then(messages => {
+            messages.next(); //Not the last message (the ./poll)
+            const reactMessage = messages.next().value[1]; //But the one before that
+
+            if (reactMessage.author !== message.author) {
+                message.channel.send("Use on your own message. (Right after you've sent a message)");
+                return;
             }
-        }).catch(e => {
-            message.channel.send("It looks like you provided an invalid message.");
-        });
+
+            if (numReactions === 2) {
+                reactMessage.react("\u{1f44d}").then(() => {
+                    reactMessage.react("\u{1f44e}").catch(console.error);;
+                }).catch(console.error);
+            }else {
+                addReacts(reactMessage, 127462, numReactions);
+            }
+        })
     },
 
     eval(message) {
