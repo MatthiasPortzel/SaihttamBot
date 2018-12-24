@@ -105,7 +105,7 @@ var commands = [
                 }
             })
         },
-        args: "<count>",
+        args: "[count]",
         help: "Adds *count* reactions to the previous message (so people can vote)"
     },
 
