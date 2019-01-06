@@ -111,9 +111,8 @@ var commands = [
 
     {
         command: ["eval"],
-        func: function
-        eval(message) {
-            if (message.author.id != "226887818364846082") {
+        func: function (message) {
+            if (message.author.id !== "226887818364846082") {
                 message.channel.send("You don't have permission to use this.");
                 return;
             }
